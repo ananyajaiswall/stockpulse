@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StockPulse Test Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>StockPulse Test Page</h1>
+    <p>This page tests the connection between the frontend and backend APIs.</p>
+    
+    <div>
+        <button onclick="testProducts()">Test Products API</button>
+        <button onclick="testPricing()">Test Pricing Suggestions API</button>
+        <button onclick="testReorder()">Test Reorder Suggestions API</button>
+        <button onclick="testAll()">Test All APIs</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+        }
+        
+        function addResult(message, isSuccess = true) {
+            const div = document.createElement('div');
+            div.className = `test-result ${isSuccess ? 'success' : 'error'}`;
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+        }
+        
+        async function testEndpoint(endpoint, name) {
+            try {
+                addResult(`Testing ${name}...`);
+                const response = await fetch(endpoint);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                addResult(`✓ ${name}: Success (${Array.isArray(data) ? data.length : 'object'} items)`, true);
+                console.log(`${name} data:`, data);
+            } catch (error) {
+                addResult(`✗ ${name}: ${error.message}`, false);
+                console.error(`${name} error:`, error);
+            }
+        }
+        
+        function testProducts() {
+            clearResults();
+            testEndpoint('/products', 'Products API');
+        }
+        
+        function testPricing() {
+            clearResults();
+            testEndpoint('/pricing-suggestions', 'Pricing Suggestions API');
+        }
+        
+        function testReorder() {
+            clearResults();
+            testEndpoint('/reorder-suggestions', 'Reorder Suggestions API');
+        }
+        
+        function testAll() {
+            clearResults();
+            testEndpoint('/products', 'Products API');
+            testEndpoint('/pricing-suggestions', 'Pricing Suggestions API');
+            testEndpoint('/reorder-suggestions', 'Reorder Suggestions API');
+        }
+    </script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 package com.stockpulse.product.dto;
 
-import java.math.BigDecimal;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public record UpdateStockDTO(
-    Integer stockLevel
+    @NotNull @PositiveOrZero Integer stockLevel
 ) {}

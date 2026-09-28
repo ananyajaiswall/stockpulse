@@ -49,22 +49,16 @@ public class PricingSuggestionController {
     @PatchMapping("/{id}")
     public ResponseEntity<PricingSuggestionDTO> updateSuggestionStatus(@PathVariable String id, 
                                                                       @Valid @RequestBody UpdateSuggestionStatusDTO statusDTO) {
-        try {
-            PricingSuggestion updatedSuggestion;
-            if (statusDTO.status() == SuggestionStatus.ACCEPTED) {
-                updatedSuggestion = commerceService.acceptPricingSuggestion(id);
-            } else if (statusDTO.status() == SuggestionStatus.REJECTED) {
-                updatedSuggestion = commerceService.rejectPricingSuggestion(id);
-            } else {
-                updatedSuggestion = pricingSuggestionService.updateSuggestionStatus(id, statusDTO.status());
-            }
-            
-            return ResponseEntity.ok(pricingSuggestionMapper.toDTO(updatedSuggestion));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+        PricingSuggestion updatedSuggestion;
+        if (statusDTO.status() == SuggestionStatus.ACCEPTED) {
+            updatedSuggestion = commerceService.acceptPricingSuggestion(id);
+        } else if (statusDTO.status() == SuggestionStatus.REJECTED) {
+            updatedSuggestion = commerceService.rejectPricingSuggestion(id);
+        } else {
+            updatedSuggestion = pricingSuggestionService.updateSuggestionStatus(id, statusDTO.status());
         }
+        
+        return ResponseEntity.ok(pricingSuggestionMapper.toDTO(updatedSuggestion));
     }
     
     public record UpdateSuggestionStatusDTO(@NotNull SuggestionStatus status) {}

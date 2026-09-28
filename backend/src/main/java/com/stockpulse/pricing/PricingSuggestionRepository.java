@@ -20,7 +20,7 @@ public interface PricingSuggestionRepository extends JpaRepository<PricingSugges
     List<PricingSuggestion> findByProductIdAndStatus(String productId, SuggestionStatus status);
     
     @Query("SELECT ps FROM PricingSuggestion ps WHERE ps.product = :product AND ps.status = :status AND ps.triggerReason = :triggerReason")
-    Optional<PricingSuggestion> findPendingByProductAndTriggerReason(@Param("product") Product product, 
+    List<PricingSuggestion> findPendingByProductAndTriggerReason(@Param("product") Product product, 
                                                                    @Param("status") SuggestionStatus status,
                                                                    @Param("triggerReason") TriggerReason triggerReason);
 }

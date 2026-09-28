@@ -1,6 +1,7 @@
 package com.stockpulse.product.mapper;
 
 import com.stockpulse.product.Product;
+import com.stockpulse.product.ProductStatus;
 import com.stockpulse.product.dto.ProductDTO;
 import com.stockpulse.product.dto.CreateProductDTO;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,7 @@ public class ProductMapper {
             return null;
         }
         
-        return new Product(
+        Product product = new Product(
             dto.id(),
             dto.sku(),
             dto.name(),
@@ -44,7 +45,10 @@ public class ProductMapper {
             dto.stockLevel() != null ? dto.stockLevel() : 0,
             dto.reorderThreshold() != null ? dto.reorderThreshold() : 0,
             dto.demandVelocity() != null ? dto.demandVelocity() : 0,
-            dto.status()
+            dto.status() != null ? dto.status() : ProductStatus.ACTIVE
         );
+        product.setCostPrice(dto.costPrice());
+        product.setSupplierId(dto.supplierId());
+        return product;
     }
 }

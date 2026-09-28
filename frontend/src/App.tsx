@@ -41,6 +41,17 @@ function App() {
     }
   };
 
+  // Run a mutation, then refresh so async-generated suggestions show up
+  const runAction = async (action: () => Promise<unknown>) => {
+    try {
+      await action();
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || 'Action failed');
+    }
+    await fetchData();
+  };
+
   // Initial load and polling
   useEffect(() => {
     fetchData();
@@ -92,6 +103,19 @@ function App() {
               <p>Stock: {product.stockLevel} (Threshold: {product.reorderThreshold})</p>
               <p>Demand Velocity: {product.demandVelocity}</p>
               <p>Status: {product.status}</p>
+              <button
+                className="btn-primary"
+                disabled={product.stockLevel === 0}
+                onClick={() => runAction(() => api.simulateOrder(product.id, 1))}
+              >
+                Simulate Sale
+              </button>
+              <button className="btn-secondary" onClick={() => runAction(() => api.createPricingSuggestion(product.id))}>
+                Suggest Pricing
+              </button>
+              <button className="btn-secondary" onClick={() => runAction(() => api.createReorderSuggestion(product.id))}>
+                Suggest Reorder
+              </button>
             </div>
           ))
         )}
@@ -112,6 +136,12 @@ function App() {
               <p>Reasoning: {suggestion.reasoning}</p>
               <p>Trigger: {suggestion.triggerReason}</p>
               <p>Status: {suggestion.status}</p>
+              <button className="btn-primary" onClick={() => runAction(() => api.updatePricingSuggestionStatus(suggestion.id, 'ACCEPTED'))}>
+                Accept
+              </button>
+              <button className="btn-secondary" onClick={() => runAction(() => api.updatePricingSuggestionStatus(suggestion.id, 'REJECTED'))}>
+                Reject
+              </button>
             </div>
           ))
         )}
@@ -127,13 +157,19 @@ function App() {
               <h3>Product: {suggestion.productName}</h3>
               <p>Current Stock: {suggestion.currentStock}</p>
               <p>Recommended Quantity: {suggestion.recommendedQuantity}</p>
-              {suggestion.suggestedLeadTimeDays && (
+              {suggestion.suggestedLeadTimeDays != null && (
                 <p>Suggested Lead Time: {suggestion.suggestedLeadTimeDays} days</p>
               )}
               <p>Confidence: {(suggestion.confidence * 100).toFixed(1)}%</p>
               <p>Reasoning: {suggestion.reasoning}</p>
               <p>Trigger: {suggestion.triggerReason}</p>
               <p>Status: {suggestion.status}</p>
+              <button className="btn-primary" onClick={() => runAction(() => api.updateReorderSuggestionStatus(suggestion.id, 'ACCEPTED'))}>
+                Accept
+              </button>
+              <button className="btn-secondary" onClick={() => runAction(() => api.updateReorderSuggestionStatus(suggestion.id, 'REJECTED'))}>
+                Reject
+              </button>
             </div>
           ))
         )}

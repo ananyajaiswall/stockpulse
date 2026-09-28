@@ -10,6 +10,10 @@ import com.stockpulse.product.dto.UpdateStockDTO;
 import com.stockpulse.product.dto.SimulateOrderDTO;
 import com.stockpulse.product.mapper.ProductMapper;
 import com.stockpulse.commerce.CommerceService;
+import com.stockpulse.pricing.dto.PricingSuggestionDTO;
+import com.stockpulse.pricing.mapper.PricingSuggestionMapper;
+import com.stockpulse.reorder.dto.ReorderSuggestionDTO;
+import com.stockpulse.reorder.mapper.ReorderSuggestionMapper;
 import com.stockpulse.common.TriggerReason;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,11 +30,16 @@ public class ProductController {
     private final ProductService productService;
     private final CommerceService commerceService;
     private final ProductMapper productMapper;
+    private final PricingSuggestionMapper pricingSuggestionMapper;
+    private final ReorderSuggestionMapper reorderSuggestionMapper;
     
-    public ProductController(ProductService productService, CommerceService commerceService, ProductMapper productMapper) {
+    public ProductController(ProductService productService, CommerceService commerceService, ProductMapper productMapper,
+                             PricingSuggestionMapper pricingSuggestionMapper, ReorderSuggestionMapper reorderSuggestionMapper) {
         this.productService = productService;
         this.commerceService = commerceService;
         this.productMapper = productMapper;
+        this.pricingSuggestionMapper = pricingSuggestionMapper;
+        this.reorderSuggestionMapper = reorderSuggestionMapper;
     }
     
     @PostMapping
@@ -90,23 +99,15 @@ public class ProductController {
     }
     
     @PostMapping("/{id}/suggest-pricing")
-    public ResponseEntity<?> createPricingSuggestion(@PathVariable String id) {
-        try {
-            var suggestion = commerceService.createPricingSuggestion(id, TriggerReason.MANUAL);
-            return ResponseEntity.ok(suggestion);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<PricingSuggestionDTO> createPricingSuggestion(@PathVariable String id) {
+        var suggestion = commerceService.createPricingSuggestion(id, TriggerReason.MANUAL);
+        return ResponseEntity.ok(pricingSuggestionMapper.toDTO(suggestion));
     }
     
     @PostMapping("/{id}/suggest-reorder")
-    public ResponseEntity<?> createReorderSuggestion(@PathVariable String id) {
-        try {
-            var suggestion = commerceService.createReorderSuggestion(id, TriggerReason.MANUAL);
-            return ResponseEntity.ok(suggestion);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<ReorderSuggestionDTO> createReorderSuggestion(@PathVariable String id) {
+        var suggestion = commerceService.createReorderSuggestion(id, TriggerReason.MANUAL);
+        return ResponseEntity.ok(reorderSuggestionMapper.toDTO(suggestion));
     }
     
     private TriggerReason determineTriggerReason(Product product) {

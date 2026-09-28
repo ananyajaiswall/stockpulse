@@ -47,17 +47,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!-- Added explicit compiler configuration to force the real JDK path -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
-				<configuration>
-					<release>17</release>
-					<fork>true</fork>
-					<executable>C:\Program Files\Java\jdk-21.0.12.1\bin\javac.exe</executable>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

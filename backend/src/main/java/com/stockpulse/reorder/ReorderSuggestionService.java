@@ -50,7 +50,8 @@ public class ReorderSuggestionService {
     }
     
     public Optional<ReorderSuggestion> findPendingByProductAndTrigger(Product product, TriggerReason triggerReason) {
-        return reorderSuggestionRepository.findPendingByProductAndTriggerReason(product, SuggestionStatus.PENDING, triggerReason);
+        return reorderSuggestionRepository.findPendingByProductAndTriggerReason(product, SuggestionStatus.PENDING, triggerReason)
+            .stream().findFirst();
     }
     
     public ReorderSuggestion updateSuggestionStatus(String id, SuggestionStatus status) {

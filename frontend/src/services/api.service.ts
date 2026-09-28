@@ -5,7 +5,7 @@ const API_BASE_URL = '';
 export const api = {
   // Products
   getProducts: async (status?: string, category?: string): Promise<Product[]> => {
-    let url = `${API_BASE_URL}products`;
+    let url = `${API_BASE_URL}/products`;
     const params = new URLSearchParams();
     if (status) params.append('status', status);
     if (category) params.append('category', category);
@@ -26,7 +26,7 @@ export const api = {
 
   updateStock: async (productId: string, stockLevel: number): Promise<Product> => {
     try {
-      const response = await fetch(`${API_BASE_URL}products/${productId}/stock`, {
+      const response = await fetch(`${API_BASE_URL}/products/${productId}/stock`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stockLevel })
@@ -44,7 +44,7 @@ export const api = {
 
   simulateOrder: async (productId: string, quantity: number): Promise<Product> => {
     try {
-      const response = await fetch(`${API_BASE_URL}products/${productId}/orders`, {
+      const response = await fetch(`${API_BASE_URL}/products/${productId}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity })
@@ -62,7 +62,7 @@ export const api = {
 
   createPricingSuggestion: async (productId: string): Promise<PricingSuggestion> => {
     try {
-      const response = await fetch(`${API_BASE_URL}products/${productId}/suggest-pricing`, {
+      const response = await fetch(`${API_BASE_URL}/products/${productId}/suggest-pricing`, {
         method: 'POST'
       });
       if (!response.ok) {
@@ -78,7 +78,7 @@ export const api = {
 
   createReorderSuggestion: async (productId: string): Promise<ReorderSuggestion> => {
     try {
-      const response = await fetch(`${API_BASE_URL}products/${productId}/suggest-reorder`, {
+      const response = await fetch(`${API_BASE_URL}/products/${productId}/suggest-reorder`, {
         method: 'POST'
       });
       if (!response.ok) {
@@ -95,7 +95,7 @@ export const api = {
   // Pricing Suggestions
   getPricingSuggestions: async (): Promise<PricingSuggestion[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}pricing-suggestions`);
+      const response = await fetch(`${API_BASE_URL}/pricing-suggestions`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Failed to fetch pricing suggestions: ${response.status} ${response.statusText} - ${errorText}`);
@@ -109,7 +109,7 @@ export const api = {
 
   updatePricingSuggestionStatus: async (id: string, status: 'ACCEPTED' | 'REJECTED'): Promise<PricingSuggestion> => {
     try {
-      const response = await fetch(`${API_BASE_URL}pricing-suggestions/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/pricing-suggestions/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -128,7 +128,7 @@ export const api = {
   // Reorder Suggestions
   getReorderSuggestions: async (): Promise<ReorderSuggestion[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}reorder-suggestions`);
+      const response = await fetch(`${API_BASE_URL}/reorder-suggestions`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Failed to fetch reorder suggestions: ${response.status} ${response.statusText} - ${errorText}`);
@@ -142,7 +142,7 @@ export const api = {
 
   updateReorderSuggestionStatus: async (id: string, status: 'ACCEPTED' | 'REJECTED'): Promise<ReorderSuggestion> => {
     try {
-      const response = await fetch(`${API_BASE_URL}reorder-suggestions/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/reorder-suggestions/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })

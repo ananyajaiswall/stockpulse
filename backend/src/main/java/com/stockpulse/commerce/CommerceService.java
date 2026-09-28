@@ -81,20 +81,13 @@ public class CommerceService {
     public PricingSuggestion acceptPricingSuggestion(String suggestionId) {
         PricingSuggestion suggestion = pricingSuggestionService.updateSuggestionStatus(suggestionId, SuggestionStatus.ACCEPTED);
         
-        // Update product price
+        // Product is managed in this transaction, so changes are flushed on commit
         Product product = suggestion.getProduct();
         product.setCurrentPrice(suggestion.getRecommendedPrice());
         if (product.getStatus() == ProductStatus.PRICE_REVIEW_PENDING) {
             product.setStatus(ProductStatus.ACTIVE);
         }
-        // Save the updated product
-        productService.getProductById(product.getId()).ifPresent(p -> {
-            p.setCurrentPrice(suggestion.getRecommendedPrice());
-            if (p.getStatus() == ProductStatus.PRICE_REVIEW_PENDING) {
-                p.setStatus(ProductStatus.ACTIVE);
-            }
-        });
-        
+
         return suggestion;
     }
     
@@ -102,20 +95,9 @@ public class CommerceService {
     public ReorderSuggestion acceptReorderSuggestion(String suggestionId) {
         ReorderSuggestion suggestion = reorderSuggestionService.updateSuggestionStatus(suggestionId, SuggestionStatus.ACCEPTED);
         
-        // Update product stock
-        Product product = suggestion.getProduct();
-        product.increaseStock(suggestion.getRecommendedQuantity());
-        if (product.getStatus() == ProductStatus.OUT_OF_STOCK && product.getStockLevel() > 0) {
-            product.setStatus(ProductStatus.ACTIVE);
-        }
-        // Save the updated product
-        productService.getProductById(product.getId()).ifPresent(p -> {
-            p.increaseStock(suggestion.getRecommendedQuantity());
-            if (p.getStatus() == ProductStatus.OUT_OF_STOCK && p.getStockLevel() > 0) {
-                p.setStatus(ProductStatus.ACTIVE);
-            }
-        });
-        
+        // Product is managed in this transaction; increaseStock also clears OUT_OF_STOCK
+        suggestion.getProduct().increaseStock(suggestion.getRecommendedQuantity());
+
         return suggestion;
     }
     

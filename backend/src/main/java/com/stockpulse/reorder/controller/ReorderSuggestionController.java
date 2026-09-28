@@ -49,22 +49,16 @@ public class ReorderSuggestionController {
     @PatchMapping("/{id}")
     public ResponseEntity<ReorderSuggestionDTO> updateSuggestionStatus(@PathVariable String id,
                                                                       @Valid @RequestBody UpdateSuggestionStatusDTO statusDTO) {
-        try {
-            ReorderSuggestion updatedSuggestion;
-            if (statusDTO.status() == SuggestionStatus.ACCEPTED) {
-                updatedSuggestion = commerceService.acceptReorderSuggestion(id);
-            } else if (statusDTO.status() == SuggestionStatus.REJECTED) {
-                updatedSuggestion = commerceService.rejectReorderSuggestion(id);
-            } else {
-                updatedSuggestion = reorderSuggestionService.updateSuggestionStatus(id, statusDTO.status());
-            }
-            
-            return ResponseEntity.ok(reorderSuggestionMapper.toDTO(updatedSuggestion));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+        ReorderSuggestion updatedSuggestion;
+        if (statusDTO.status() == SuggestionStatus.ACCEPTED) {
+            updatedSuggestion = commerceService.acceptReorderSuggestion(id);
+        } else if (statusDTO.status() == SuggestionStatus.REJECTED) {
+            updatedSuggestion = commerceService.rejectReorderSuggestion(id);
+        } else {
+            updatedSuggestion = reorderSuggestionService.updateSuggestionStatus(id, statusDTO.status());
         }
+        
+        return ResponseEntity.ok(reorderSuggestionMapper.toDTO(updatedSuggestion));
     }
     
     public record UpdateSuggestionStatusDTO(@NotNull SuggestionStatus status) {}

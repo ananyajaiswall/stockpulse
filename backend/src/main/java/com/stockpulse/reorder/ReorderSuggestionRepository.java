@@ -20,7 +20,7 @@ public interface ReorderSuggestionRepository extends JpaRepository<ReorderSugges
     List<ReorderSuggestion> findByProductIdAndStatus(String productId, com.stockpulse.pricing.SuggestionStatus status);
     
     @Query("SELECT rs FROM ReorderSuggestion rs WHERE rs.product = :product AND rs.status = :status AND rs.triggerReason = :triggerReason")
-    Optional<ReorderSuggestion> findPendingByProductAndTriggerReason(@Param("product") Product product, 
+    List<ReorderSuggestion> findPendingByProductAndTriggerReason(@Param("product") Product product, 
                                                                    @Param("status") com.stockpulse.pricing.SuggestionStatus status,
                                                                    @Param("triggerReason") TriggerReason triggerReason);
 }

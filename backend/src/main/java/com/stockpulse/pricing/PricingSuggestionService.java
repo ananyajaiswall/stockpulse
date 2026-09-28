@@ -50,7 +50,8 @@ public class PricingSuggestionService {
     }
     
     public Optional<PricingSuggestion> findPendingByProductAndTrigger(Product product, TriggerReason triggerReason) {
-        return pricingSuggestionRepository.findPendingByProductAndTriggerReason(product, SuggestionStatus.PENDING, triggerReason);
+        return pricingSuggestionRepository.findPendingByProductAndTriggerReason(product, SuggestionStatus.PENDING, triggerReason)
+            .stream().findFirst();
     }
     
     public PricingSuggestion updateSuggestionStatus(String id, SuggestionStatus status) {

@@ -116,6 +116,8 @@ public class Product {
         // Update status based on stock level
         if (stockLevel == 0) {
             this.status = ProductStatus.OUT_OF_STOCK;
+        } else if (this.status == ProductStatus.OUT_OF_STOCK) {
+            this.status = ProductStatus.ACTIVE;
         }
     }
     
